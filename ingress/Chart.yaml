@@ -2,7 +2,7 @@ apiVersion: v2
 name: ingress
 description: Ingress object
 type: application
-version: 1.0
+version: 1.0.0
 appVersion: v1
 icon: https://github.com/Sierra1011/helm-charts/blob/e60110d7ee42334b692d60042e57b5718a8791dd/logo.png
 maintainers:
