@@ -1,0 +1,26 @@
+# -- name sets the name used for the resources
+name: ingress
+# -- ingressClassName sets the ingress class
+ingressClassName: ingress-nginx
+# -- add a list of annotations to the Ingress
+annotations: {}
+  # e.g.
+  # nginx.ingress.kubernetes.io/auth-signin: https://auth.${zone_name}/oauth2/start?rd=https%3A%2F%2F$host$request_uri
+  # nginx.ingress.kubernetes.io/auth-url: "http://auth.auth.svc.cluster.local/oauth2/auth"
+  # nginx.ingress.kubernetes.io/whitelist-source-range: 0.0.0.0/0
+# -- Define a DNS name for the ingress
+host: example.domain.com
+# -- Define a URL path and pathType
+paths:
+  # -- set the URL path
+  - path: /
+    # -- set the URL pathType
+    pathType: Prefix
+    # -- set the target port
+    port: 80
+    # -- set the target service
+    service: http
+# -- use a LetsEncrypt issuer to manage TLS certificates
+letsencrypt:
+  enabled: true
+  issuer: letsencrypt-prod

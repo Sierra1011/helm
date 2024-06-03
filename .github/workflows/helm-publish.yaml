@@ -51,7 +51,7 @@ jobs:
         chart: 
           - ingress
     if: github.ref_name == 'main'
-    needs: chart-testing
+    needs: testing
     steps:
       - name: Checkout
         uses: actions/checkout@v4
