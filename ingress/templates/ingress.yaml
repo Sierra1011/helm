@@ -1,18 +1,17 @@
-{{- $name := .Values.name | quote -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ $name }}
+  name: {{ .Values.name | quote }}
   labels:
      {{- include "common.labels" . | nindent 4 }}
-  {{- if .Values.annotations }}
+  {{- if or .Values.annotations .Values.letsencrypt.enabled }}
   annotations:
   {{- end }}
   {{- with .Values.annotations }}
     {{- toYaml . | nindent 4 }}
   {{- end }}
   {{- if .Values.letsencrypt.enabled }}
-    cert-manager.io/cluster-issuer: {{ .Values.letsencrypt.issuer}}
+    cert-manager.io/cluster-issuer: {{ .Values.letsencrypt.issuer | quote }}
   {{- end }}
 spec:
   ingressClassName: {{ .Values.ingressClassName }}
@@ -35,5 +34,5 @@ spec:
     - hosts:
         - {{ .Values.host | quote }}
       {{- if .Values.letsencrypt.enabled }}
-      secretName: "{{ $name }}-ingress-tls"
+      secretName: "{{ .Values.name }}-ingress-tls"
       {{- end }}
