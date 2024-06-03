@@ -1,0 +1,18 @@
+name: example-dashboard
+className: internal
+annotations:
+  nginx.ingress.kubernetes.io/auth-signin: https://auth.example.com/oauth2/start?rd=https%3A%2F%2F$host$request_uri
+  nginx.ingress.kubernetes.io/auth-url: https://auth.example.com/oauth2/auth
+  nginx.ingress.kubernetes.io/whitelist-source-range: 0.0.0.0/0
+  nginx.ingress.kubernetes.io/upstream-vhost: $service_name.$namespace.svc.cluster.local:8084
+  nginx.ingress.kubernetes.io/configuration-snippet: |
+    proxy_set_header Origin "";
+    proxy_hide_header l5d-remote-ip;
+    proxy_hide_header l5d-server-id;
+host: subdomain.example.com
+paths:
+  - path: /
+    pathType: Prefix
+    port: 8080
+    service: web
+wildcardCert: true
