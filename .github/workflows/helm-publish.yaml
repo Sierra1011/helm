@@ -1,7 +1,6 @@
-permissions:
-  id-token: write # required to use OIDC authentication
-  contents: write
-  pages: write
+#permissions:
+#  id-token: write # required to use OIDC authentication
+#  contents: write
 
 concurrency: ci-${{ github.ref }}
 
@@ -20,28 +19,23 @@ jobs:
       matrix:
         chart: 
           - ingress
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Install Helm
         uses: azure/setup-helm@v4
-
       - name: Helm Lint
         run: helm lint ${{ matrix.chart }}/
-
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-
       - name: Set up chart-testing
         uses: helm/chart-testing-action@v2
-
       - name: Run chart-testing (lint)
         run: ct lint --charts ${{ matrix.chart }}/
 
   helm_publish:
+    needs: testing
     name: Publish
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -51,31 +45,15 @@ jobs:
         chart: 
           - ingress
     if: github.ref_name == 'main'
-    needs: testing
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
       - name: Install Helm
         uses: azure/setup-helm@v4
-
-      - name: Package with Helm
-        id: package
+      - name: Helm package and push
         run: |
           helm package ${{ matrix.chart }}
-          git checkout gh-pages
-          echo "commit=true" >> "$GITHUB_OUTPUT"
-        continue-on-error: true
-
-      - name: Commit to Git
-        if: ${{ steps.package.outputs.commit }}
-        run: |
-          git config user.name "${{ github.actor }}"
-          git config user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
           tar_name="$(git ls-files --others --exclude-standard | grep tgz)"
-          helm repo index .
-          git add -A
-          git commit -m "Adding ${tar_name}"
-          git push
+          helm push ${tar_name} oci://ghcr.io/sierra1011/helm
