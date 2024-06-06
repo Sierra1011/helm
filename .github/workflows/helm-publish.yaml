@@ -39,7 +39,7 @@ jobs:
         uses: helm/chart-testing-action@v2
 
       - name: Run chart-testing (lint)
-        run: ct lint --charts charts/${{ matrix.chart }}/
+        run: ct lint --charts ${{ matrix.chart }}/
 
   helm_publish:
     name: Publish
@@ -64,7 +64,7 @@ jobs:
       - name: Package with Helm
         id: package
         run: |
-          helm package charts/${{ matrix.chart }}
+          helm package ${{ matrix.chart }}
           git checkout gh-pages
           echo "commit=true" >> "$GITHUB_OUTPUT"
         continue-on-error: true
