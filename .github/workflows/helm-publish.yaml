@@ -58,5 +58,5 @@ jobs:
       - name: Helm package and push
         run: |
           helm package ${{ matrix.chart }}
-          tar_name="$(git ls-files --others --exclude-standard | grep tgz)"
-          helm push ${tar_name} oci://ghcr.io/sierra1011/helm
+          tar="$(find *.tgz)"
+          helm push $tar oci://ghcr.io/sierra1011/helm
